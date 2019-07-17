@@ -1,5 +1,5 @@
-const w = 1000;
-const h = 500;
+const w = 1400;
+const h = 600;
 const m = 50;
 
 const content = d3.select('.content');
@@ -31,34 +31,37 @@ d3.json('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 
 		console.log(dataset);
 
-		// const years = d3.map(dataset, function (d) { return d.year; }).keys();
-		// const months = d3.map(dataset, function (d) { return d.month; }).keys();
+		const years = d3.map(dataset, (d) => { return d.year; }).keys();
+		const months = d3.map(dataset, (d) => { return d.month; }).keys();
 
 		const colorScale = d3.scaleLinear()
 			.domain(d3.extent(dataset, (d) => d.variance))
 			.range(['blue', 'red']);
 
 		const xScale = d3.scaleBand()
-			.domain(d3.extent(dataset, (d) => d.year))
+			.domain(years)
+			.padding(.1)
 			.range([m, w - m]);
 
 		const yScale = d3.scaleBand()
-			.domain(d3.extent(dataset, (d) => d.month))
+			.domain(months)
+			.padding(.1)
 			.range([m, h - m]);
 
 		svg.selectAll('rect')
 			.data(dataset)
 			.enter()
 			.append('rect')
-			.attr('x', (d) => d.year)
-			.attr('y', (d) => d.month)
-			.attr('width', 2)
-			.attr('height', 10)
+			.attr('x', (d) => xScale(d.year))
+			.attr('y', (d) => yScale(d.month))
+			.attr('width', xScale.bandwidth())
+			.attr('height', yScale.bandwidth())
 			.attr('fill', (d) => colorScale(d.variance));
 
 		const xAxis = d3.axisBottom(xScale);
 
-		const yAxis = d3.axisLeft(yScale);
+		const yAxis = d3.axisLeft(yScale)
+			.tickFormat('toto');
 
 		svg.append('g')
 			.attr('transform', 'translate(0,' + (h - m) + ')')
