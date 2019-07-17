@@ -31,8 +31,8 @@ d3.json('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 
 		console.log(dataset);
 
-		const years = d3.map(dataset, (d) => { return d.year; }).keys();
-		const months = d3.map(dataset, (d) => { return d.month; }).keys();
+		const years = d3.map(dataset, (d) => d.year).keys();
+		const months = d3.map(dataset, (d) => d.month).keys();
 
 		const colorScale = d3.scaleLinear()
 			.domain(d3.extent(dataset, (d) => d.variance))
