@@ -30,19 +30,24 @@ d3.json('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 	.then(data => {
 
 		const dataset = data.monthlyVariance;
+		const baseTemp = data.baseTemperature;
+
+		dataset.forEach(d => d.temp = baseTemp + d.variance);
 
 		console.log(dataset);
 
 		const years = d3.map(dataset, d => d.year).keys();
 		const months = d3.map(dataset, d => d.month).keys();
 
-		const min = d3.min(dataset, d => d.variance);
-		const max = d3.max(dataset, d => d.variance);
-		const middle = min + max / 2;
+		const min = d3.min(dataset, d => d.temp);
+		const max = d3.max(dataset, d => d.temp);
 
+		const colors = ['#0000cc', '#0033cc', '#0099cc', '#ccffff', '#ffff99', '#ff6600', '#ff3300', '#ff0000', '#800000'];
+
+		// TODO check domain
 		const colorScale = d3.scaleLinear()
-			.domain([min, middle, max])
-			.range(['blue', 'yellow', 'red']);
+			.domain(colors.map((color, index) => (index + 1) * (max - min) / (colors.length - 1)))
+			.range(colors);
 
 		const xScale = d3.scaleBand()
 			.domain(years)
@@ -60,7 +65,22 @@ d3.json('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 			.attr('y', d => yScale(d.month))
 			.attr('width', xScale.bandwidth())
 			.attr('height', yScale.bandwidth())
-			.attr('fill', d => colorScale(d.variance));
+			.attr('fill', d => colorScale(d.temp))
+			.attr('class', 'cell')
+			.attr('data-month', d => d.month - 1)
+			.attr('data-year', d => d.year)
+			.attr('data-temp', d => d.temp)
+			.on('mouseover', d => {
+				tooltip.attr('data-year', d.year)
+					.style('left', xScale(d.year) + 10 + 'px')
+					.style('top', yScale(d.month) - 10 + 'px')
+					.style('opacity', .9)
+					.html(() => `<p>${d.year} : ${d.temp.toFixed(1)}&deg;C</p>`);
+			})
+			.on('mouseout', function () {
+				tooltip.style('opacity', 0)
+					.html(() => '');
+			});;;
 
 		const xAxis = d3.axisBottom(xScale)
 			.tickValues(years.filter(year => year % 10 === 0));
