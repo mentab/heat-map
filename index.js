@@ -1,6 +1,6 @@
 const formatMonth = d3.timeFormat("%B");
 
-const w = 1400;
+const w = 1200;
 const h = 600;
 const m = 50;
 
@@ -28,26 +28,16 @@ const legend = svg.append('g')
 
 d3.json('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json')
 	.then(data => {
-
 		const dataset = data.monthlyVariance;
 		const baseTemp = data.baseTemperature;
 
 		dataset.forEach(d => d.temp = baseTemp + d.variance);
 
-		console.log(dataset);
-
 		const years = d3.map(dataset, d => d.year).keys();
 		const months = d3.map(dataset, d => d.month).keys();
 
-		const min = d3.min(dataset, d => d.temp);
-		const max = d3.max(dataset, d => d.temp);
-
-		const colors = ['#0000cc', '#0033cc', '#0099cc', '#ccffff', '#ffff99', '#ff6600', '#ff3300', '#ff0000', '#800000'];
-
-		// TODO check domain
-		const colorScale = d3.scaleLinear()
-			.domain(colors.map((color, index) => (index + 1) * (max - min) / (colors.length - 1)))
-			.range(colors);
+		const colorScale = d3.scaleSequential(d3.interpolateBlues)
+			.domain(d3.extent(dataset, d => d.temp));
 
 		const xScale = d3.scaleBand()
 			.domain(years)
