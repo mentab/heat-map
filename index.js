@@ -36,7 +36,13 @@ d3.json('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 		const years = d3.map(dataset, d => d.year).keys();
 		const months = d3.map(dataset, d => d.month).keys();
 
-		const colorScale = d3.scaleSequential(d3.interpolateBlues)
+		const min = d3.min(dataset, d => d.temp);
+		const max = d3.max(dataset, d => d.temp);
+
+		const colorArray = [...Array(10)];
+		const colors = colorArray.map((color, index) => (index + 1) * (max - min) / (colorArray.length - 1));
+
+		const colorScale = d3.scaleSequential(d3.interpolateRainbow)
 			.domain(d3.extent(dataset, d => d.temp));
 
 		const xScale = d3.scaleBand()
@@ -46,6 +52,21 @@ d3.json('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 		const yScale = d3.scaleBand()
 			.domain(months)
 			.range([m, h - m]);
+
+		const legendScale = d3.scaleBand()
+			.domain(colors)
+			.range([0, 400]);
+
+		d3.select('#legend')
+			.selectAll('rect')
+			.data(colors)
+			.enter()
+			.append('rect')
+			.attr('x', d => legendScale(d))
+			.attr('y', 0)
+			.attr('width', legendScale.bandwidth())
+			.attr('height', 40)
+			.attr('fill', d => colorScale(d));
 
 		svg.selectAll('rect')
 			.data(dataset)
@@ -62,21 +83,25 @@ d3.json('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 			.attr('data-temp', d => d.temp)
 			.on('mouseover', d => {
 				tooltip.attr('data-year', d.year)
-					.style('left', xScale(d.year) + 10 + 'px')
-					.style('top', yScale(d.month) - 10 + 'px')
+					.style('left', xScale(d.year) + 'px')
+					.style('top', yScale(d.month) + 'px')
 					.style('opacity', .9)
 					.html(() => `<p>${d.year} : ${d.temp.toFixed(1)}&deg;C</p>`);
 			})
 			.on('mouseout', function () {
 				tooltip.style('opacity', 0)
 					.html(() => '');
-			});;;
+			});
 
 		const xAxis = d3.axisBottom(xScale)
 			.tickValues(years.filter(year => year % 10 === 0));
 
 		const yAxis = d3.axisLeft(yScale)
 			.tickFormat(month => formatMonth(new Date(0).setMonth(month - 1)));
+
+
+		const legendAxis = d3.axisBottom(legendScale)
+			.tickFormat(temp => temp.toFixed(2));
 
 		svg.append('g')
 			.attr('transform', 'translate(0,' + (h - m) + ')')
@@ -87,4 +112,8 @@ d3.json('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 			.attr('transform', 'translate(' + m + ', 0)')
 			.attr('id', 'y-axis')
 			.call(yAxis);
+
+		svg.append('g')
+			.attr('id', 'legend-axis')
+			.call(legendAxis);
 	});

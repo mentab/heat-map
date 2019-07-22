@@ -1,0 +1,81 @@
+*
+{
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body
+{
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	background: slategray;
+}
+
+.container
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
+
+.padding-box
+{
+	padding: 50px;
+	background: white;
+	box-shadow: 2px 2px 9px black;
+}
+
+.content
+{	
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.cell
+{
+	cursor: pointer;
+}
+
+.cell:hover
+{
+	fill: red;
+}
+
+#title
+{
+	font-weight: normal;
+}
+
+#tooltip
+{
+	text-align: center;
+	padding: 5px;
+	border-radius: 5px;
+	border: 1px black solid;
+	background: white;
+	font-size: 10px;
+}
+
+#legend
+{
+	font-size: 9px;
+}
+
+#legend-axis line
+{
+  stroke: white;
+}
+
+#legend-axis path
+{
+  stroke: white;
+}
+
+#legend-axis text
+{
+  fill: white;
+}  
