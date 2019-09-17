@@ -42,7 +42,7 @@ d3.json('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 		const colorArray = [...Array(10)];
 		const colors = colorArray.map((color, index) => (index + 1) * (max - min) / (colorArray.length - 1));
 
-		const colorScale = d3.scaleSequential(d3.interpolateRainbow)
+		const colorScale = d3.scaleSequential(d3.interpolateReds)
 			.domain(d3.extent(dataset, d => d.temp));
 
 		const xScale = d3.scaleBand()
@@ -55,7 +55,7 @@ d3.json('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 
 		const legendScale = d3.scaleBand()
 			.domain(colors)
-			.range([0, 400]);
+			.range([450, 750]);
 
 		d3.select('#legend')
 			.selectAll('rect')
